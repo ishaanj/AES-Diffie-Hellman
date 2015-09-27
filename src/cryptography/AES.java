@@ -1,10 +1,8 @@
 package cryptography;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Base64;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -69,39 +67,28 @@ public class AES {
 		}
 	}
 
-	public String encryptString(String input) {
-		String output = "";
-
+	public byte[] encryptBytes(byte input[]) {
+		byte encryptedBytes[] = null;
 		try {
-			byte hold[] = input.getBytes("UTF8");
-			byte encryptedBytes[] = encipher.doFinal(hold);
-			output = Base64.getEncoder().encodeToString(encryptedBytes);
-
+			encryptedBytes = encipher.doFinal(input);
 		} catch (IllegalBlockSizeException e) {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
 		}
-		return output;
+		return encryptedBytes;
 	}
 
-	public String decryptString(String input) {
-		String output = "";
-
-		byte decryptedBytes[];
+	public byte[] decryptBytes(byte input[]) {
+		byte decryptedBytes[] = null;
 		try {
-			byte hold[] = Base64.getDecoder().decode(input);
-			decryptedBytes = decipher.doFinal(hold);
-			output = new String(decryptedBytes);
-
+			decryptedBytes = decipher.doFinal(input);
 		} catch (IllegalBlockSizeException e) {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
 			e.printStackTrace();
 		} 
-		return output;
+		return decryptedBytes;
 	}
 
 	public String getKey() {
