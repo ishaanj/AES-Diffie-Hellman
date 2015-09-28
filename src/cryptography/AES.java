@@ -13,6 +13,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
 public class AES {
 
 	private final int KEY_SIZE = 128;
@@ -75,7 +77,7 @@ public class AES {
 		}
 	}
 
-	public byte[] encryptBytes(byte input[]) {
+	public synchronized byte[] encryptBytes(byte input[]) {
 		byte encryptedBytes[] = null;
 		try {
 			encryptedBytes = encipher.doFinal(input);
@@ -87,7 +89,7 @@ public class AES {
 		return encryptedBytes;
 	}
 
-	public byte[] decryptBytes(byte input[]) {
+	public synchronized byte[] decryptBytes(byte input[]) {
 		byte decryptedBytes[] = null;
 		try {
 			decryptedBytes = decipher.doFinal(input);
