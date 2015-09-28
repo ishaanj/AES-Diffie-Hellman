@@ -1,5 +1,5 @@
 package communication;
 
-public class Foo {
+public class Server {
 
 }
