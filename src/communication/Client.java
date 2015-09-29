@@ -20,6 +20,8 @@ public class Client {
 	static ArrayList<Future<byte[]>> futureByte;
 	static AES aes;
 	static FileManager fm;
+	
+	private static final int clientP = 401, clientG = 3;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
@@ -48,8 +50,20 @@ public class Client {
 			// server to client keystring
 			InputStream inFromServer = client.getInputStream();
 			DataInputStream in = new DataInputStream(inFromServer);
+			
+			
+			/*StringBuilder sb = new StringBuilder();
+			String keystring = "";
+			int keyLength = in.readInt();
+			
+			for(int i = 0; i < keyLength; i++) {
+				
+			}*/
 			String keystring = in.readUTF();
-			System.out.println("Client: Encrypted keystring - " + keystring);
+			
+			
+			
+			System.out.println("Client: Encrypted keystring - " + keystring + " Key Length : " + keystring.length());
 			
 			//System.out.println("Client: Decrypted Key: " + Base64.getDecoder().de);
 			aes = new AES(AES.stringToKey(keystring));

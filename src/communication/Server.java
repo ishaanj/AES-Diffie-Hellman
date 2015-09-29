@@ -19,6 +19,8 @@ public class Server {
 	static ArrayList<Future<byte[]>> futureByte;
 	static AES aes;
 	static FileManager fm;
+	
+	private static final int serverP = 401, serverG = 3;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 
@@ -34,7 +36,7 @@ public class Server {
 		// create AES instance
 		aes = new AES();
 		String keystring = aes.keyToString();
-		System.out.println("Server: Encrypted Keystring - " + keystring);
+		System.out.println("Server: Encrypted Keystring - " + keystring + " String Size : " + keystring.length());
 
 		while (true) {
 			try {
@@ -46,7 +48,13 @@ public class Server {
 				// server to client keystring
 				DataOutputStream out = new DataOutputStream(client.getOutputStream());
 				out.writeUTF(keystring);
-
+				//Sending keystring using Diffie–Hellman Key Exchange Algorithm
+				/*out.writeInt(keystring.length());
+				for(int i = 0; i < keystring.length(); i++) {
+					out.writeInt(AES.modExp(serverG, keystring.charAt(i), serverP));
+				}*/
+			
+				
 				// client to server filename
 				DataInputStream in = new DataInputStream(client.getInputStream());
 				System.out.println(in.readUTF());
@@ -102,5 +110,7 @@ public class Server {
 				break;
 			}
 		}
+		
+		//CryptoManager.shutdown();
 	}
 }

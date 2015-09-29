@@ -45,7 +45,7 @@ public class FileManager {
 		int noOfChunks = (int) (fileData.length / chunkSize) + 1;
 		chunks = new byte[noOfChunks][];
 		
-		System.out.println("Chunkify : filesize = " + fileData.length);
+		//System.out.println("Chunkify : filesize = " + fileData.length);
 
 		for(int i = 0, k = 0; i < fileData.length; i += chunkSize, k++) {
 			if(i + chunkSize < fileData.length) {
@@ -59,7 +59,7 @@ public class FileManager {
 		for(int i = 0; i < chunks.length; i++)
 			length += chunks[i].length;
 		
-		System.out.println("Chunks size : " + length);
+		//System.out.println("Chunks size : " + length);
 		
 		return chunks;
 	}
@@ -72,7 +72,7 @@ public class FileManager {
 		for(int i = 0; i < chunks.length; i++)
 			length += chunks[i].length;
 		
-		System.out.println("Length = " + length);
+		//System.out.println("Length = " + length);
 
 		file = new byte[length];
 
