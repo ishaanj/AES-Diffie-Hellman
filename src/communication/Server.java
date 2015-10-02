@@ -49,6 +49,7 @@ public class Server {
 	            //server to client keystring
 	            DataOutputStream out =
 	                 new DataOutputStream(him.getOutputStream());
+	            System.out.println("Generated Keystring: " + keystring);
 	            out.writeUTF(keystring);
 	            
 	            //client to server filename
