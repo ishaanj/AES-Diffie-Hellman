@@ -96,38 +96,57 @@ public class ManInMiddle {
 				// read byte chunks
 				int fblen = inS.readInt();
 				int csize = inS.readInt();
+				chunkyfileByte = new byte[fblen][];
+				unchunked = new byte[fblen][];
+				
+				int len = 0;
 				for (int i = 0; i < fblen; i++) {
-					inS.readFully(chunkyfileByte[i], 0, csize);
+					len = inS.readInt();
+					if(len != 0) {
+						chunkyfileByte[i] = new byte[len];
+						inS.read(chunkyfileByte[i], 0, len);
+					}
 				}
 
 				// CryptoManager
-				futureByte = CryptoManager.getExecutor(aes).decryptFile(
-						chunkyfileByte);
+				futureByte = CryptoManager.getExecutor(aes).decryptFile(chunkyfileByte);
 
 				// Decrypt arraylist
 				for (int i = 0; i < futureByte.size(); i++) {
 					unchunked[i] = futureByte.get(i).get();
 				}
-
 				freeFile = fm.dechunkify(unchunked);
 
 				// write file
 				fm.writeFile(freeFile, opPath);
 
-				// Chunkify file
-				fileByte = fm.readFile(basePath + fname);
-				System.out.println("Reading file and chunkifying");
+				//re-encrypt
+				fm = new FileManager();
+				fileByte = fm.readFile(basePath + fileName);
+				System.out.println("MiM: Reading file and chunkifying");
 				chunkyFileByte = fm.chunkify(fileByte);
+				
+				//System.out.println("Server : Decrypted Bytes - " + Arrays.toString(chunkyFileByte[0]));
 
 				// CryptoManager
-				futureByte = CryptoManager.getExecutor(aes).encryptFile(
-						chunkyFileByte);
+				futureByte = CryptoManager.getExecutor(aes).encryptFile(chunkyFileByte);
+				
 				outC.writeInt(futureByte.size());
 				outC.writeInt(fm.chunkSize);
-				System.out.println("Sending File chunks");
-				for (int i = 0; i < futureByte.size() - 1; i++) {
-					outC.write(futureByte.get(i).get(), 0, fm.chunkSize);
+				System.out.println("Server: Sending File chunks");
+				byte[] holder = null;
+				for (int i = 0; i < futureByte.size(); i++) {
+					holder = futureByte.get(i).get();
+					if(holder != null) {
+						outC.writeInt(holder.length);
+						outC.write(holder, 0, holder.length);
+					}
+					else {
+						outC.write(0);
+					}
 				}
+
+				System.out.println("MiM: Finished sending file");
 
 				// Close connection
 				me.close();

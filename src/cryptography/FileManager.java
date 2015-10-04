@@ -32,7 +32,7 @@ public class FileManager {
 	public boolean writeFile(byte file[], String opFileName) {
 		Path path = Paths.get(opFileName);
 		try {
-			Files.write(path, file, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
+			Files.write(path, file, StandardOpenOption.CREATE, StandardOpenOption.WRITE/*, StandardOpenOption.APPEND*/);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return false;
@@ -44,15 +44,23 @@ public class FileManager {
 		byte chunks[][] = null;
 		int noOfChunks = (int) (fileData.length / chunkSize) + 1;
 		chunks = new byte[noOfChunks][];
+		
+		//System.out.println("Chunkify : filesize = " + fileData.length);
 
-		for(int i = 0; i < fileData.length; i += chunkSize) {
-			if(i + chunkSize <= fileData.length) {
-				chunks[i] = Arrays.copyOfRange(fileData, i, i + chunkSize);
+		for(int i = 0, k = 0; i < fileData.length; i += chunkSize, k++) {
+			if(i + chunkSize < fileData.length) {
+				chunks[k] = Arrays.copyOfRange(fileData, i, i + chunkSize);
 			}
 			else {
-				chunks[i] = Arrays.copyOfRange(fileData, i, fileData.length);
+				chunks[k] = Arrays.copyOfRange(fileData, i, fileData.length);
 			}
 		}
+		int length = 0;
+		for(int i = 0; i < chunks.length; i++)
+			length += chunks[i].length;
+		
+		//System.out.println("Chunks size : " + length);
+		
 		return chunks;
 	}
 
@@ -63,11 +71,13 @@ public class FileManager {
 
 		for(int i = 0; i < chunks.length; i++)
 			length += chunks[i].length;
+		
+		//System.out.println("Length = " + length);
 
 		file = new byte[length];
 
 		for(int i = 0; i < chunks.length; i++) {
-			if(bytesRead + chunkSize <= length) {
+			if(bytesRead + chunkSize < length) {
 				System.arraycopy(chunks[i], 0, file, bytesRead, chunkSize);
 				bytesRead += chunkSize;
 			}
