@@ -51,17 +51,7 @@ public class Client {
 			InputStream inFromServer = client.getInputStream();
 			DataInputStream in = new DataInputStream(inFromServer);
 			
-			
-			/*StringBuilder sb = new StringBuilder();
-			String keystring = "";
-			int keyLength = in.readInt();
-			
-			for(int i = 0; i < keyLength; i++) {
-				
-			}*/
 			String keystring = in.readUTF();
-			
-			
 			
 			System.out.println("Client: Encrypted keystring - " + keystring + " Key Length : " + keystring.length());
 			
@@ -113,6 +103,7 @@ public class Client {
 			fm.writeFile(freeFile, opPath);
 			// close connection
 			client.close();
+			System.out.println("Client: Finished");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
