@@ -1,14 +1,26 @@
-package communication;
+package communication.secure;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-import cryptography.*;
+import cryptography.AES;
+import cryptography.CryptoManager;
+import cryptography.FileManager;
 
-public class Server {
-
+public class SecureServer {
+	
 	private static ServerSocket server;
 	private static Socket him;
 	private static int port, timeout = 100000;
@@ -17,7 +29,11 @@ public class Server {
 	private static byte[] fileByte;
 	private static byte[][] chunkyFileByte;
 	private static ArrayList<Future<byte[]>> futureByte;
+	
+	private static AES keyAES;
+	private static final byte internalKey[] = "a!`g;haetl+d$#(^".getBytes(StandardCharsets.UTF_8);
 	private static AES aes;
+	
 	private static FileManager fm;
 	
 	private static final int serverP = 401, serverG = 3;
@@ -34,8 +50,16 @@ public class Server {
 		server.setSoTimeout(timeout);
 
 		// create AES instance
+		keyAES = new AES(internalKey);
 		aes = new AES();
+		
+		// Unencrypted / Decrypted Keystring
 		String keystring = aes.keyToString();
+		System.out.println("Server: Raw Keystring - " + keystring + " String Size : " + keystring.length());
+		
+		// Keystring encrypted using internal AES key encryption
+		keystring = Base64.getEncoder().encodeToString((keyAES.encryptBytes(keystring.getBytes())));
+		
 		System.out.println("Server: Encrypted Keystring - " + keystring + " String Size : " + keystring.length());
 
 		while (true) {
@@ -48,12 +72,6 @@ public class Server {
 				// server to client keystring
 				DataOutputStream out = new DataOutputStream(client.getOutputStream());
 				out.writeUTF(keystring);
-				//Sending keystring using Diffie–Hellman Key Exchange Algorithm
-				/*out.writeInt(keystring.length());
-				for(int i = 0; i < keystring.length(); i++) {
-					out.writeInt(AES.modExp(serverG, keystring.charAt(i), serverP));
-				}*/
-			
 				
 				// client to server filename
 				DataInputStream in = new DataInputStream(client.getInputStream());

@@ -1,16 +1,24 @@
-package communication;
+package communication.secure;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import cryptography.*;
+import cryptography.AES;
+import cryptography.CryptoManager;
+import cryptography.FileManager;
 
-public class Client {
-
+public class SecureClient {
 	private static Socket client;
 	private static String serverAddr = "localhost";
 	private static int port;
@@ -18,7 +26,11 @@ public class Client {
 	private static byte[] freeFile;
 	private static byte[][] chunkyfileByte, unchunked;
 	private static ArrayList<Future<byte[]>> futureByte;
+	
+	private static AES keyAES;
+	private static final byte internalKey[] = "a!`g;haetl+d$#(^".getBytes(StandardCharsets.UTF_8);
 	private static AES aes;
+	
 	private static FileManager fm;
 	
 	private static final int clientP = 401, clientG = 3;
@@ -51,9 +63,16 @@ public class Client {
 			InputStream inFromServer = client.getInputStream();
 			DataInputStream in = new DataInputStream(inFromServer);
 			
+			// Encrypted keystring from SecureServer
 			String keystring = in.readUTF();
-			
 			System.out.println("Client: Encrypted keystring - " + keystring + " Key Length : " + keystring.length());
+			keyAES = new AES(internalKey);
+			
+			// Decrypted Keystring
+			keystring = new String(Base64.getDecoder().decode(keystring));
+			keystring = new String(keyAES.decryptBytes(keystring.getBytes()));
+			
+			System.out.println("Client: Decrypted keystring - " + keystring + " Key Length : " + keystring.length());
 			
 			//System.out.println("Client: Decrypted Key: " + Base64.getDecoder().de);
 			aes = new AES(AES.stringToKey(keystring));

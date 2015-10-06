@@ -119,19 +119,6 @@ public class AES {
 	public static byte[] stringToKey(String key) {
 		return Base64.getDecoder().decode(key);
 	}
-	
-	public static int modExp(int g, int m, int p) {
-	    long x = 1;
-	    long y = g;
-	    while(m > 0){
-	        if(m % 2 == 1){
-	            x = (x * y) % p;
-	        }
-	        y = (y * y) % p; 
-	        m /= 2;
-	    }
-	    return (int) x % p;
-	}
 
 }
 

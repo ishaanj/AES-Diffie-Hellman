@@ -158,8 +158,7 @@ public class ManInMiddle {
 				System.out.println("MitM: Socket timed out!");
 				break;
 			} catch (IOException e) {
-				e.printStackTrace();
-				break;
+				return;
 			}
 		}
 	}
