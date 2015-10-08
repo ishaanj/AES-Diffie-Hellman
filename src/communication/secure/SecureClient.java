@@ -28,12 +28,12 @@ public class SecureClient {
 	private static ArrayList<Future<byte[]>> futureByte;
 	
 	private static AES keyAES;
-	private static final byte internalKey[] = "a!`g;haetl+d$#(^".getBytes(StandardCharsets.UTF_8);
 	private static AES aes;
+
+	// Secret Key
+	private static final byte internalKey[] = "a!`g;haetl+d$#(^".getBytes(StandardCharsets.UTF_8);
 	
 	private static FileManager fm;
-	
-	private static final int clientP = 401, clientG = 3;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 

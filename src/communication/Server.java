@@ -48,13 +48,7 @@ public class Server {
 				// server to client keystring
 				DataOutputStream out = new DataOutputStream(client.getOutputStream());
 				out.writeUTF(keystring);
-				//Sending keystring using Diffie–Hellman Key Exchange Algorithm
-				/*out.writeInt(keystring.length());
-				for(int i = 0; i < keystring.length(); i++) {
-					out.writeInt(AES.modExp(serverG, keystring.charAt(i), serverP));
-				}*/
 			
-				
 				// client to server filename
 				DataInputStream in = new DataInputStream(client.getInputStream());
 				System.out.println(in.readUTF());
